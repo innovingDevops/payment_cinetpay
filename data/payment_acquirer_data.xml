@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="payment_acquirer_cinetpay" model="payment.acquirer">
+            <field name="name">Cinetpay</field>
+            <field name="image" type="base64" file="payment_cinetpay/static/src/img/cinetpay_icon.png"/>
+            <field name="provider">cinetpay</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="view_template_id" ref="payment_cinetpay.cinetpay_form"/>
+            <field name="registration_view_template_id" ref="payment_cinetpay.cinetpay_s2s_form"/>
+            <field name="environment">test</field>
+            <field name="sequence">99</field>
+            <field name="description">
+                <![CDATA[
+                    <p>Un moyen de paiement pour accepter des paiements en ligne via mobile onney (Orange, Moov, MTN)</p>
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Paiement en ligne</li>
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Suivi de l'état de paiement</li>
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Abonnements</li>
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Enregistrement de cartes</li>
+                    </ul>
+                ]]>
+            </field>
+            <field name="pre_msg"><![CDATA[
+                    <p>Un moyen de paiement pour accepter des paiements en ligne via mobile onney (Orange, Moov, MTN)</p>
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Paiement en ligne</li>
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Suivi de l'état de paiement</li>
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Abonnements</li>
+                        <li class="list-inline-item"><i class="fa fa-check"></i>Enregistrement de cartes</li>
+                    </ul>
+                ]]></field>
+            <field name="cinetpay_secret_key">dummy</field>
+            <field name="cinetpay_publishable_key">dummy</field>
+        </record>
+    </data>
+</odoo>
