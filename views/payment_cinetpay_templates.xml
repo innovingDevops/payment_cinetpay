@@ -28,6 +28,7 @@
                 checkout();
             </script>
 
+
         </template>
         <template id="assets_frontend" inherit_id="web.assets_frontend" name="Website Assets">
             <xpath expr="//link[last()]" position="after">
@@ -44,7 +45,37 @@
                         const customer_phone_number = document.getElementById('customer_phone_number').value;
                         const customer_city = document.getElementById('customer_city').value;
                         const customer_country = document.getElementById('customer_country').value;
-                       
+                        // Récupération du jeton CSRF d'Odoo
+                        const csrfToken = odoo.csrf_token;
+
+                        // Création du formulaire dynamique
+                        const form = document.createElement('form');
+                        form.action = '/cinetpay/payment/process'; // Chemin vers votre contrôleur personnalisé
+                        form.method='POST';
+
+                        // Création des champs du formulaire
+                        const amountField = document.createElement('input');
+                        amountField.type = 'hidden';
+                        amountField.name = 'amount';
+                        amountField.value = amount;
+                        form.appendChild(amountField);
+
+                        const transactionIdField = document.createElement('input');
+                        transactionIdField.type = 'hidden';
+                        transactionIdField.name = 'transaction_id';
+                        transactionIdField.value = Math.floor(Math.random() * 100000000).toString();
+                        form.appendChild(transactionIdField);
+
+                        // Création des champs du formulaire
+                        const csrfTokenField = document.createElement('input');
+                        csrfTokenField.type = 'hidden';
+                        csrfTokenField.name = 'csrf_token';
+                        csrfTokenField.value = csrfToken;
+                        form.appendChild(csrfTokenField);
+
+                        // Ajout du formulaire dynamique à la page et soumission
+                        document.body.appendChild(form);
+
 
                         CinetPay.setConfig({
                             apikey: '413919683635ad6326e7004.92445036',//   YOUR APIKEY
@@ -73,13 +104,12 @@
 
                         });
                         
-                        const payment_process_link = "/payment/process"
-                        
                         CinetPay.waitResponse(function(data) {
                             if (data.status == "REFUSED") {
+                                form.submit();
                                 if (alert("Votre paiement a échoué")) {
+
                                     window.location.reload();
-                                    window.location.href = payment_process_link;
                                 }
                             } else if (data.status == "ACCEPTED") {
                                 if (alert("Votre paiement a été effectué avec succès")) {
