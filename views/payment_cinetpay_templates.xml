@@ -2,16 +2,16 @@
 <odoo>
     <data>
         <template id="cinetpay_form" >
-            <input type="text" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
-            <input type="text" name='cinetpay_image' t-att-value="acquirer.cinetpay_image_url"/>
-            <input type="text" name='merchant' t-att-value='acquirer.company_id.name'/>
-            <input type="text" name='amount' id="our_amount" t-att-value="amount"/>
-            <input type="text" name='cinetpay_secret_key' id="cinetpay_secret_key" t-att-value="acquirer.cinetpay_secret_key"/>
-            <input type="text" name='cinetpay_publishable_key' id="cinetpay_publishable_key" t-att-value="acquirer.cinetpay_publishable_key"/>
-            <input type="text" name='return_url' t-att-value='returndata'/>
+            <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+            <input type="hidden" name='cinetpay_image' t-att-value="acquirer.cinetpay_image_url"/>
+            <input type="hidden" name='merchant' t-att-value='acquirer.company_id.name'/>
+            <input type="hidden" name='amount' id="our_amount" t-att-value="amount"/>
+            <input type="hidden" name='cinetpay_secret_key' id="cinetpay_secret_key" t-att-value="acquirer.cinetpay_secret_key"/>
+            <input type="hidden" name='cinetpay_publishable_key' id="cinetpay_publishable_key" t-att-value="acquirer.cinetpay_publishable_key"/>
+            <input type="hidden" name='return_url' t-att-value='returndata'/>
             <!--Order Information -->
-            <input type="text" name='invoice_num' t-att-value='reference'/>
-            <input type="text" name='currency' t-att-value='currency'/>
+            <input type="hidden" id="reference" name='invoice_num' t-att-value='reference'/>
+            <input type="hidden" name='currency' t-att-value='currency'/>
             <input type="hidden" name='currency_id' t-att-value='currency_id'/>
             <!-- Billing Information-->
             <input type="hidden" name='name' id='customer_name' t-att-value='name'/>
@@ -44,7 +44,11 @@
                         const customer_email = document.getElementById('customer_email').value;
                         const customer_phone_number = document.getElementById('customer_phone_number').value;
                         const customer_city = document.getElementById('customer_city').value;
-                        const customer_country = document.getElementById('customer_country').value;
+                        let customer_country = document.getElementById('customer_country').value;
+                        const transaction_id = "CNT-INNOV-"+Math.floor(Math.random() * 100000000).toString();
+                        const acquirer_cinetpay = document.getElementById('acquirer_cinetpay').value;
+                        const cinetpay_secret_key = document.getElementById('cinetpay_secret_key').value;
+                        const cinetpay_publishable_key = document.getElementById('cinetpay_publishable_key').value;
                         // Récupération du jeton CSRF d'Odoo
                         const csrfToken = odoo.csrf_token;
 
@@ -60,13 +64,17 @@
                         amountField.value = amount;
                         form.appendChild(amountField);
 
+                        //Ajout de  champ au form dynamique
+                        reference = document.getElementById('reference')
+                        form.appendChild(reference);
+
                         const transactionIdField = document.createElement('input');
                         transactionIdField.type = 'hidden';
                         transactionIdField.name = 'transaction_id';
-                        transactionIdField.value = Math.floor(Math.random() * 100000000).toString();
+                        transactionIdField.value = transaction_id;
                         form.appendChild(transactionIdField);
 
-                        // Création des champs du formulaire
+                        // Création des champs du formulaire dynamique
                         const csrfTokenField = document.createElement('input');
                         csrfTokenField.type = 'hidden';
                         csrfTokenField.name = 'csrf_token';
@@ -78,27 +86,27 @@
 
 
                         CinetPay.setConfig({
-                            apikey: '413919683635ad6326e7004.92445036',//   YOUR APIKEY
-                            site_id: '102309',//YOUR_SITE_ID
+                            apikey: cinetpay_secret_key,//   YOUR APIKEY
+                            site_id: cinetpay_publishable_key,//YOUR_SITE_ID
                             notify_url: 'http://mondomaine.com/notify/',
                             mode: 'PRODUCTION'
                         });
 
 
                         CinetPay.getCheckout({
-                            transaction_id: Math.floor(Math.random() * 100000000).toString(), // YOUR TRANSACTION ID
+                            transaction_id: transaction_id, // YOUR TRANSACTION ID
                             amount: amount,
                             currency: 'XOF',
                             channels: 'ALL',
                             description: 'Test de paiement',
                              //Fournir ces variables pour le paiements par carte bancaire
-                            customer_name:"Joe",//Le nom du client
-                            customer_surname:"Down",//Le prenom du client
-                            customer_email: "down@test.com",//l'email du client
-                            customer_phone_number: "088767611",//l'email du client
+                            customer_name:customer_name,//Le nom du client
+                            customer_surname:customer_name,//Le prenom du client
+                            customer_email: customer_email,//l'email du client
+                            customer_phone_number: customer_phone_number,//l'email du client
                             customer_address : "BP 0024",//addresse du client
-                            customer_city: "Antananarivo",// La ville du client
-                            customer_country : "CM",// le code ISO du pays
+                            customer_city: customer_city,// La ville du client
+                            customer_country : "CI",// le code ISO du pays
                             customer_state : "CM",// le code ISO l'état
                             customer_zip_code : "06510", // code postal
 
